@@ -31,7 +31,8 @@ projectFilesBackup
 .dist
 
 /core/client/tpl/hbs-tpl.js
-/core/client/assets/css
+# send css to azure
+# /core/client/assets/css
 .sass-cache/
 /core/client/assets/sass/config.rb
 /core/client/assets/sass/layouts/config.rb
@@ -54,7 +55,9 @@ CHANGELOG.md
 # Casper generated files
 /core/test/functional/*.png
 
-config.js
+# send to azure
+# config.js
 
 # Built asset files
-/core/built
+# send to azure
+# /core/built
