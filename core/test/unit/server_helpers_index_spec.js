@@ -184,6 +184,16 @@ describe('Core Helpers', function () {
             rendered2.string.should.equal('post-template');
             rendered3.string.should.equal('archive-template');
         });
+
+        it('can render class for static page', function () {
+            var rendered = handlebars.helpers.body_class.call(
+                    {post: {page: true}},
+                    {path: '/'}
+                );
+
+            should.exist(rendered);
+            rendered.string.should.equal('home-template page');
+        });
     });
 
     describe('post_class Helper', function () {
@@ -433,10 +443,34 @@ describe('Core Helpers', function () {
             String(rendered).should.equal('on haunted, ghost');
         });
 
-        it('does not add prefix if no tags exist', function () {
+        it('can add a single suffix to multiple tags', function () {
+            var tags = [{name: 'haunted'}, {name: 'ghost'}],
+                rendered = handlebars.helpers.tags.call(
+                    {tags: tags},
+                    {"hash": {suffix: ' forever'}}
+                );
+
+            should.exist(rendered);
+
+            String(rendered).should.equal('haunted, ghost forever');
+        });
+
+        it('can add a prefix and suffix to multiple tags', function () {
+            var tags = [{name: 'haunted'}, {name: 'ghost'}],
+                rendered = handlebars.helpers.tags.call(
+                    {tags: tags},
+                    {"hash": {suffix: ' forever', prefix: 'on '}}
+                );
+
+            should.exist(rendered);
+
+            String(rendered).should.equal('on haunted, ghost forever');
+        });
+
+        it('does not add prefix or suffix if no tags exist', function () {
             var rendered = handlebars.helpers.tags.call(
                     {},
-                    {"hash": {prefix: 'on '}}
+                    {"hash": {prefix: 'on ', suffix: ' forever'}}
                 );
 
             should.exist(rendered);

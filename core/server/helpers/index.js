@@ -119,25 +119,14 @@ coreHelpers = function (ghost) {
     // Note that the standard {{#each tags}} implementation is unaffected by this helper
     // and can be used for more complex templates.
     ghost.registerThemeHelper('tags', function (options) {
-        var separator = ', ',
-            prefix,
-            output,
-            tagNames;
+        var separator = _.isString(options.hash.separator) ? options.hash.separator : ', ',
+            prefix = _.isString(options.hash.prefix) ? options.hash.prefix : '',
+            suffix = _.isString(options.hash.suffix) ? options.hash.suffix : '',
+            output = '',
+            tagNames = _.pluck(this.tags, 'name');
 
-        if (_.isString(options.hash.separator)) {
-            separator = options.hash.separator;
-        }
-
-        if (_.isString(options.hash.prefix)) {
-            prefix = options.hash.prefix;
-        }
-
-        tagNames = _.pluck(this.tags, 'name');
-
-        if (tagNames.length && prefix) {
-            output = prefix + tagNames.join(separator);
-        } else {
-            output = tagNames.join(separator);
+        if (tagNames.length) {
+            output = prefix + tagNames.join(separator) + suffix;
         }
 
         return output;
@@ -219,7 +208,8 @@ coreHelpers = function (ghost) {
 
     ghost.registerThemeHelper('body_class', function (options) {
         var classes = [],
-            tags = this.post && this.post.tags ? this.post.tags : this.tags || [];
+            tags = this.post && this.post.tags ? this.post.tags : this.tags || [],
+            page = this.post && this.post.page ? this.post.page : this.page || false;
 
         if (_.isString(this.path) && this.path.match(/\/page/)) {
             classes.push('archive-template');
@@ -233,6 +223,10 @@ coreHelpers = function (ghost) {
             classes = classes.concat(tags.map(function (tag) { return 'tag-' + tag.slug; }));
         }
 
+        if (page) {
+            classes.push('page');
+        }
+
         return ghost.doFilter('body_class', classes, function (classes) {
             var classString = _.reduce(classes, function (memo, item) { return memo + ' ' + item; }, '');
             return new hbs.handlebars.SafeString(classString.trim());
@@ -242,7 +236,8 @@ coreHelpers = function (ghost) {
     ghost.registerThemeHelper('post_class', function (options) {
         var classes = ['post'],
             tags = this.post && this.post.tags ? this.post.tags : this.tags || [],
-            featured = this.post && this.post.featured ? this.post.featured : this.featured || false;
+            featured = this.post && this.post.featured ? this.post.featured : this.featured || false,
+            page = this.post && this.post.page ? this.post.page : this.page || false;
 
         if (tags) {
             classes = classes.concat(tags.map(function (tag) { return 'tag-' + tag.slug; }));
@@ -250,6 +245,10 @@ coreHelpers = function (ghost) {
 
         if (featured) {
             classes.push('featured');
+        }
+
+        if (page) {
+            classes.push('page');
         }
 
         return ghost.doFilter('post_class', classes, function (classes) {
